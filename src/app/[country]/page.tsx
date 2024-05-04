@@ -5,6 +5,7 @@ import { Countries, Country } from "@/types/country";
 import { CountryInformation } from "@/components/CountryInformation";
 import { Loader } from "@/components/Loader";
 import { Card } from "@/components/Card";
+import { CountriesList } from "@/containers/CountriesList";
 
 export default function CountryPage({
   params,
@@ -50,24 +51,10 @@ export default function CountryPage({
           <CountryInformation data={countryData} />
 
           {borders.length > 0 && (
-            <div className="flex flex-col gap-4 mt-7 text-center mb-8">
-              <h2 className="font-bold text-3xl text-gray-800">
-                Países que fazem fronteira
-              </h2>
-              <div className="flex flex-wrap justify-center items-center gap-4">
-                {borders.map((item) => (
-                  <Card
-                    key={item.cca3}
-                    alt={item.flags.alt || item.name.common}
-                    flagUrl={item.flags.svg}
-                    translatedName={
-                      item.translations.por.common || item.name.common
-                    }
-                    name={item.name.common}
-                  />
-                ))}
-              </div>
-            </div>
+            <CountriesList
+              countries={borders}
+              title="Países que fazem fronteira"
+            />
           )}
         </div>
       ) : (

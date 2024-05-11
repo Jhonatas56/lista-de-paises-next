@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Countries, Country } from "@/types/country";
 import { CountryInformation } from "@/components/CountryInformation";
 import { Loader } from "@/components/Loader";
-import { CountriesList } from "@/containers/CountriesList";
 import { removeCurrentCountry } from "@/utils/removeCurrentCountry";
+import { Card } from "@/components/Card";
 
 export default function CountryPage({
   params,
@@ -60,8 +60,6 @@ export default function CountryPage({
     countryData && getLanguages();
   }, [countryData]);
 
-  console.log(languages, "languages");
-
   return (
     <main className="flex flex-col items-center justify-between pt-4 max-w-[1920px] mx-auto">
       {countryData ? (
@@ -72,17 +70,45 @@ export default function CountryPage({
           <CountryInformation data={countryData} />
 
           {borders.length > 0 && (
-            <CountriesList
-              countries={borders}
-              title="Países que fazem fronteira"
-            />
+            <div className="flex flex-col gap-4 mt-7 text-center mb-8">
+              <h2 className="font-bold text-3xl text-gray-800">
+                Países que fazem fronteira
+              </h2>
+              <div className="flex flex-wrap justify-center items-center gap-4">
+                {borders.map((item) => (
+                  <Card
+                    key={item.cca3}
+                    alt={item.flags.alt || item.name.common}
+                    flagUrl={item.flags.svg}
+                    translatedName={
+                      item.translations.por.common || item.name.common
+                    }
+                    name={item.name.common}
+                  />
+                ))}
+              </div>
+            </div>
           )}
 
           {languages.length > 0 && (
-            <CountriesList
-              countries={languages}
-              title="Países que falam o mesmo idioma"
-            />
+            <div className="flex flex-col gap-4 mt-7 text-center mb-8">
+              <h2 className="font-bold text-3xl text-gray-800">
+                Países que falam o mesmo idioma
+              </h2>
+              <div className="flex flex-wrap justify-center items-center gap-4">
+                {languages.map((item) => (
+                  <Card
+                    key={item.cca3}
+                    alt={item.flags.alt || item.name.common}
+                    flagUrl={item.flags.svg}
+                    translatedName={
+                      item.translations.por.common || item.name.common
+                    }
+                    name={item.name.common}
+                  />
+                ))}
+              </div>
+            </div>
           )}
         </div>
       ) : (

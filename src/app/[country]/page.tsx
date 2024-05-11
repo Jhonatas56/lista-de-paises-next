@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Countries, Country } from "@/types/country";
 import { CountryInformation } from "@/components/CountryInformation";
 import { Loader } from "@/components/Loader";
-import { Card } from "@/components/Card";
 import { CountriesList } from "@/containers/CountriesList";
+import { removeCurrentCountry } from "@/utils/removeCurrentCountry";
 
 export default function CountryPage({
   params,
@@ -14,6 +14,7 @@ export default function CountryPage({
 }) {
   const [countryData, setCountryData] = useState<Country>();
   const [borders, setBorders] = useState<Countries>([]);
+  const [languages, setLanguages] = useState<Countries>([]);
 
   useEffect(() => {
     const getCountry = async () => {
@@ -38,8 +39,28 @@ export default function CountryPage({
       const resposeData: Countries = await response.json();
       setBorders(resposeData);
     };
+
+    const getLanguages = async () => {
+      const languagesIndexes = Object.keys(countryData?.languages || {});
+
+      languagesIndexes.map(async (language) => {
+        const response = await fetch(
+          `https://restcountries.com/v3.1/lang/${language}`
+        );
+        const data = await response.json();
+
+        const filteredData = countryData
+          ? removeCurrentCountry(countryData, data)
+          : data;
+
+        setLanguages([...languages, ...filteredData]);
+      });
+    };
     countryData && getBorders();
+    countryData && getLanguages();
   }, [countryData]);
+
+  console.log(languages, "languages");
 
   return (
     <main className="flex flex-col items-center justify-between pt-4 max-w-[1920px] mx-auto">
@@ -54,6 +75,13 @@ export default function CountryPage({
             <CountriesList
               countries={borders}
               title="Países que fazem fronteira"
+            />
+          )}
+
+          {languages.length > 0 && (
+            <CountriesList
+              countries={languages}
+              title="Países que falam o mesmo idioma"
             />
           )}
         </div>
